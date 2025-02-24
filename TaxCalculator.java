@@ -4,56 +4,52 @@ public class TaxCalculator {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
-        // Input income
-        System.out.print("Enter your annual income (THB): ");
+        System.out.print("Please enter your annual income (Baht): ");
         double income = scanner.nextDouble();
         
-        // Input expenses
-        System.out.print("Enter deductible expenses (THB): ");
+        System.out.print("Please enter your deductible expenses (Baht): ");
         double expenses = scanner.nextDouble();
         
-        // Basic deduction
         double personalDeduction = 60000;
-        System.out.println("Personal deduction: " + personalDeduction + " THB (Maximum 60,000 THB)");
         
-        System.out.print("Enter number of children eligible for deduction: ");
+        System.out.print("Please enter the number of children eligible for tax deductions: ");
         int numChildren = scanner.nextInt();
         double childDeduction = numChildren * 30000;
-        System.out.println("Child deduction (30,000 THB per child): " + childDeduction + " THB (No limit)");
         
-        System.out.print("Enter spouse deduction (THB): ");
+        System.out.print("Please enter the spouse deduction (Baht): ");
         double spouseDeduction = scanner.nextDouble();
         spouseDeduction = Math.min(spouseDeduction, 60000);
-        System.out.println("Spouse deduction: " + spouseDeduction + " THB (Maximum 60,000 THB)");
         
-        System.out.print("Enter life insurance deduction (THB): ");
+        System.out.print("Please enter life insurance deductions (Baht): ");
         double lifeInsurance = scanner.nextDouble();
         lifeInsurance = Math.min(lifeInsurance, 100000);
-        System.out.println("Life insurance deduction: " + lifeInsurance + " THB (Maximum 100,000 THB)");
         
-        System.out.print("Enter provident fund deduction (THB): ");
+        System.out.print("Please enter provident fund deductions (Baht): ");
         double providentFund = scanner.nextDouble();
         providentFund = Math.min(providentFund, 500000);
-        System.out.println("Provident fund deduction: " + providentFund + " THB (Maximum 500,000 THB including RMF and SSF)");
         
-        System.out.print("Enter other deductions (THB): ");
+        System.out.print("Please enter other deductions (Baht): ");
         double otherDeductions = scanner.nextDouble();
-        System.out.println("Other deductions: " + otherDeductions + " THB");
         
-        // Calculate total deductions
         double totalDeductions = personalDeduction + spouseDeduction + childDeduction + lifeInsurance + providentFund + otherDeductions;
-        System.out.println("Total deductions: " + totalDeductions + " THB");
-        
-        // Calculate net income
         double netIncome = income - expenses - totalDeductions;
         if (netIncome < 0) netIncome = 0;
-        System.out.println("Net income after expenses and deductions: " + netIncome + " THB");
-        
-        // Calculate tax based on progressive rates
         double tax = calculateTax(netIncome);
         
-        // Display result
-        System.out.println("Tax payable: " + tax + " THB");
+        System.out.println("---------------------------------------------------------------");
+        System.out.printf("%-35s %15s %20s\n", "Item", "Amount Deducted", "Maximum Deductible Amount");
+        System.out.println("---------------------------------------------------------------");
+        System.out.printf("%-35s %15.2f Baht %20.2f Baht\n", "Personal Deduction", personalDeduction, 60000.0);
+        System.out.printf("%-35s %15.2f Baht %20s\n", "Child Deduction (" + numChildren + " Children)", childDeduction, "Unlimited");
+        System.out.printf("%-35s %15.2f Baht %20.2f Baht\n", "Spouse Deduction", spouseDeduction, 60000.0);
+        System.out.printf("%-35s %15.2f Baht %20.2f Baht\n", "Life Insurance Deduction", lifeInsurance, 100000.0);
+        System.out.printf("%-35s %15.2f Baht %20.2f Baht\n", "Provident Fund Deduction", providentFund, 500000.0);
+        System.out.printf("%-35s %15.2f Baht %20s\n", "Other Deductions", otherDeductions, "Unlimited");
+        System.out.println("---------------------------------------------------------------");
+        System.out.printf("%-35s %15.2f Baht\n", "Total Deductions", totalDeductions);
+        System.out.printf("%-35s %15.2f Baht\n", "Net Income", netIncome);
+        System.out.printf("%-35s %15.2f Baht\n", "Tax Payable", tax);
+        System.out.println("---------------------------------------------------------------");
         
         scanner.close();
     }
