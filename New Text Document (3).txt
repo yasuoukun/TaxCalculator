@@ -1,0 +1,90 @@
+import java.util.Scanner;
+
+public class TaxCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // รับข้อมูลรายได้
+        System.out.print("กรุณากรอกรายได้ต่อปี (บาท): ");
+        double income = scanner.nextDouble();
+        
+        // รับข้อมูลค่าใช้จ่าย
+        System.out.print("กรุณากรอกค่าใช้จ่ายที่สามารถหักได้ (บาท): ");
+        double expenses = scanner.nextDouble();
+        
+        // ค่าลดหย่อนพื้นฐาน
+        double personalDeduction = 60000;
+        System.out.println("ค่าลดหย่อนส่วนตัว: " + personalDeduction + " บาท (สูงสุด 60,000 บาท)");
+        
+        System.out.print("กรุณากรอกจำนวนบุตรที่ใช้สิทธิ์ลดหย่อน: ");
+        int numChildren = scanner.nextInt();
+        double childDeduction = numChildren * 30000;
+        System.out.println("ค่าลดหย่อนบุตร (30,000 บาท/คน): " + childDeduction + " บาท (ไม่จำกัดจำนวน)");
+        
+        System.out.print("กรุณากรอกค่าลดหย่อนคู่สมรส (บาท): ");
+        double spouseDeduction = scanner.nextDouble();
+        spouseDeduction = Math.min(spouseDeduction, 60000);
+        System.out.println("ค่าลดหย่อนคู่สมรส: " + spouseDeduction + " บาท (สูงสุด 60,000 บาท)");
+        
+        System.out.print("กรุณากรอกค่าลดหย่อนประกันชีวิต (บาท): ");
+        double lifeInsurance = scanner.nextDouble();
+        lifeInsurance = Math.min(lifeInsurance, 100000);
+        System.out.println("ค่าลดหย่อนประกันชีวิต: " + lifeInsurance + " บาท (สูงสุด 100,000 บาท)");
+        
+        System.out.print("กรุณากรอกค่าลดหย่อนกองทุนสำรองเลี้ยงชีพ (บาท): ");
+        double providentFund = scanner.nextDouble();
+        providentFund = Math.min(providentFund, 500000);
+        System.out.println("ค่าลดหย่อนกองทุนสำรองเลี้ยงชีพ: " + providentFund + " บาท (สูงสุด 500,000 บาท รวม RMF และ SSF)");
+        
+        System.out.print("กรุณากรอกค่าลดหย่อนอื่น ๆ (บาท): ");
+        double otherDeductions = scanner.nextDouble();
+        System.out.println("ค่าลดหย่อนอื่น ๆ: " + otherDeductions + " บาท");
+        
+        // คำนวณค่าลดหย่อนรวม
+        double totalDeductions = personalDeduction + spouseDeduction + childDeduction + lifeInsurance + providentFund + otherDeductions;
+        System.out.println("ค่าลดหย่อนรวมทั้งหมด: " + totalDeductions + " บาท");
+        
+        // คำนวณรายได้สุทธิ
+        double netIncome = income - expenses - totalDeductions;
+        if (netIncome < 0) netIncome = 0;
+        System.out.println("รายได้สุทธิหลังหักค่าใช้จ่ายและค่าลดหย่อน: " + netIncome + " บาท");
+        
+        // คำนวณภาษีตามอัตราก้าวหน้า
+        double tax = calculateTax(netIncome);
+        
+        // แสดงผลลัพธ์
+        System.out.println("ภาษีที่ต้องจ่าย: " + tax + " บาท");
+        
+        scanner.close();
+    }
+    
+    public static double calculateTax(double income) {
+        double tax = 0;
+        double[][] brackets = {
+            {150000, 0.00},
+            {300000, 0.05},
+            {500000, 0.10},
+            {750000, 0.15},
+            {1000000, 0.20},
+            {2000000, 0.25},
+            {5000000, 0.30},
+            {Double.MAX_VALUE, 0.35}
+        };
+        
+        double previousLimit = 0;
+        for (double[] bracket : brackets) {
+            double limit = bracket[0];
+            double rate = bracket[1];
+            
+            if (income > previousLimit) {
+                double taxableAmount = Math.min(income - previousLimit, limit - previousLimit);
+                tax += taxableAmount * rate;
+            } else {
+                break;
+            }
+            previousLimit = limit;
+        }
+        
+        return tax;
+    }
+}
